@@ -1,0 +1,17 @@
+# paste this to /etc/fail2ban/jail.local
+
+[DEFAULT]
+
+bantime = 1h
+findtime = 10m
+maxretry = 5
+
+bantime.increment = true
+bantime.rndtime = 30m
+bantime.maxtime = 180d
+
+ignoreself = true
+ignoreip = 127.0.0.1/8 ::1
+
+[sshd]
+enabled = true
