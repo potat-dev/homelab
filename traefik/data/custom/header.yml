@@ -1,0 +1,42 @@
+# set of middlewares to add security headers to the requests
+# (no routers or services are defined here)
+
+http:
+  middlewares:
+    redirect-to-https:
+      redirectScheme:
+        scheme: https
+        permanent: true
+
+    iframe-headers:
+      headers:
+        frameDeny: true
+        customFrameOptionsValue: SAMEORIGIN
+
+    security-headers:
+      headers:
+        browserXssFilter: true
+        contentTypeNosniff: true
+
+    strict-transport-security:
+      headers:
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 15552000
+
+    custom-headers:
+      headers:
+        customRequestHeaders:
+          X-Forwarded-Proto: https
+
+    # chained headers
+
+    secured-headers:
+      chain:
+        middlewares:
+          - redirect-to-https
+          - iframe-headers
+          - security-headers
+          - strict-transport-security
+          - custom-headers

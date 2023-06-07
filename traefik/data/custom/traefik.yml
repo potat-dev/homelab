@@ -1,0 +1,22 @@
+{{ $name := "traefik" }}
+
+http:
+  routers:
+    {{ $name }}:
+      entrypoints:
+        - web-secure
+      rule: Host(`{{ $name }}.{{ env "DOMAIN_NAME" }}`)
+      middlewares:
+        - {{ $name }}-auth
+      service: api@internal
+      tls:
+        certresolver: cloudflare
+        domains:
+          - main: '{{ env "DOMAIN_NAME" }}'
+            sans: '*.{{ env "DOMAIN_NAME" }}'
+
+  middlewares:
+    {{ $name }}-auth:
+      basicauth:
+        users:
+          - "user:hash" # generate with htpasswd

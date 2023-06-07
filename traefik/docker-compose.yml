@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - CF_API_EMAIL=YOUR_EMAIL
+      - CF_DNS_API_TOKEN=YOUR_TOKEN
+      - DOMAIN_NAME=example.com
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /root/traefik/data/traefik.yml:/traefik.yml:ro
+      - /root/traefik/data/acme.json:/acme.json
+      - /root/traefik/data/custom/:/custom/:ro

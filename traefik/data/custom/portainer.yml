@@ -1,0 +1,22 @@
+{{ $name := "portainer" }}
+{{ $url := "https://192.168.1.200:9443" }}
+
+http:
+  routers:
+    {{ $name }}:
+      entryPoints:
+        - web
+        - web-secure
+      rule: Host(`{{ $name }}.{{ env "DOMAIN_NAME" }}`)
+      middlewares:
+        - secured-headers
+      tls:
+        certResolver: cloudflare
+      service: {{ $name }}
+
+  services:
+    {{ $name }}:
+      loadBalancer:
+        servers:
+          - url: {{ $url }}
+        passHostHeader: true
