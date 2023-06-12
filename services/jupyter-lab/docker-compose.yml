@@ -1,0 +1,13 @@
+# paste this to Portainer: Stacks -> Add stack -> Web editor
+
+version: '3'
+services:
+  jupyter-lab:
+    restart: unless-stopped
+    container_name: jupyter-lab
+    image: jupyter/scipy-notebook
+    command: start-notebook.sh --user=root
+    ports:
+      - 8888:8888
+    volumes:
+      - /code/projects:/home/jovyan/projects
