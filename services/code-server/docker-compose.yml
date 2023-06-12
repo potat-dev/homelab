@@ -1,0 +1,21 @@
+# paste this to Portainer: Stacks -> Add stack -> Web editor
+
+version: "2.1"
+services:
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-server
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Moscow
+      - PASSWORD=YOUR_COOL_PASS
+      - SUDO_PASSWORD=YOUR_COOL_PASS
+      - PROXY_DOMAIN=code.example.com
+      # - DEFAULT_WORKSPACE=/projects
+    volumes:
+      - /code/config:/config
+      - /code/projects:/projects
+    ports:
+      - 8443:8443
+    restart: unless-stopped
