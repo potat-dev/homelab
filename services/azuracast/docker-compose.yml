@@ -1,0 +1,66 @@
+# copy this file into /var/azuracast
+# (recommended directory by https://docs.azuracast.com/en/getting-started/installation/docker)
+
+services:
+  web:
+    container_name: azuracast
+    image: 'ghcr.io/azuracast/azuracast:${AZURACAST_VERSION:-latest}'
+    labels:
+      - com.centurylinklabs.watchtower.scope=azuracast
+    ports:
+      - '${AZURACAST_HTTP_PORT:-80}:80'
+      - '${AZURACAST_HTTPS_PORT:-443}:443'
+      - '${AZURACAST_SFTP_PORT:-2022}:2022'
+    env_file: azuracast.env
+    environment:
+      LANG: '${LANG:-en_US.UTF-8}'
+      AZURACAST_DC_REVISION: 14
+      AZURACAST_VERSION: '${AZURACAST_VERSION:-latest}'
+      AZURACAST_SFTP_PORT: '${AZURACAST_SFTP_PORT:-2022}'
+      NGINX_TIMEOUT: '${NGINX_TIMEOUT:-1800}'
+      LETSENCRYPT_HOST: '${LETSENCRYPT_HOST:-}'
+      LETSENCRYPT_EMAIL: '${LETSENCRYPT_EMAIL:-}'
+      PUID: '${AZURACAST_PUID:-1000}'
+      PGID: '${AZURACAST_PGID:-1000}'
+      NGINX_RADIO_PORTS: (18000)
+      NGINX_WEBDJ_PORTS: (18005)
+    volumes:
+      - 'www_uploads:/var/azuracast/uploads'
+      - 'station_data:/var/azuracast/stations'
+      - 'shoutcast2_install:/var/azuracast/servers/shoutcast2'
+      - 'stereo_tool_install:/var/azuracast/servers/stereo_tool'
+      - 'geolite_install:/var/azuracast/geoip'
+      - 'sftpgo_data:/var/azuracast/sftpgo/persist'
+      - 'backups:/var/azuracast/backups'
+      - 'acme:/var/azuracast/acme'
+      - 'db_data:/var/lib/mysql'
+    restart: unless-stopped
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    logging:
+      options:
+        max-size: 1m
+        max-file: '5'
+
+  updater:
+    container_name: azuracast_updater
+    image: 'ghcr.io/azuracast/updater:latest'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    logging:
+      options:
+        max-size: 1m
+        max-file: '5'
+
+volumes:
+  db_data: {}
+  acme: {}
+  shoutcast2_install: {}
+  stereo_tool_install: {}
+  geolite_install: {}
+  sftpgo_data: {}
+  station_data: {}
+  www_uploads: {}
+  backups: {}
